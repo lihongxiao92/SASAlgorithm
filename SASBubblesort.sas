@@ -138,3 +138,49 @@ data _null_;
 	stop;
 run;
 
+
+%let  BubbleSort = %bquote(232,99,7, 3, 23, 58, 98, 100); 
+%let  Cnt        = %sysfunc(countw(&BubbleSort.));
+
+data _null_;	
+	array Bubble [&Cnt.]  _temporary_;
+	do k = 1 to &Cnt.;
+		Bubble[k] = input(scan("&BubbleSort.", k, ","), best.);		
+	end;
+	length BubbleSort $30000;
+	Index1 = (&Cnt. - 1);
+	do i = 1 to Index1;
+		BubbleSort = "";
+		put i " loop :"	;
+		/* If the array has been partial sorting, then record this index. */
+		SortFlag = 1;
+		if i = 1 then 
+		Index2 = (&Cnt. - i);
+		else Index2 = Index1;
+		do j = 1 to Index2;
+			if j < &Cnt. then do;
+				if Bubble[j] > Bubble[j+1] then do;
+					TempVar     = Bubble[j];
+					Bubble[j]   = Bubble[j+1];
+					Bubble[j+1] = TempVar;		
+					SortFlag = j+1;			
+				end;
+			end;
+			else do;
+				if Bubble[j-1] > Bubble[j] then do;
+					TempVar     = Bubble[j-1];
+					Bubble[j-1]   = Bubble[j];
+					Bubble[j] = TempVar;		
+					SortFlag = j;			
+				end;
+			end;
+		end;		
+		do l = 1 to &Cnt.;
+			BubbleSort = catx(" , ", BubbleSort, Bubble[l]);
+		end;
+		put BubbleSort;
+		Index1 = SortFlag;		
+		if Index1 <= 2 then leave;
+	end;
+	stop;
+run;
