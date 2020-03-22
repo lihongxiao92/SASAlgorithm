@@ -100,8 +100,9 @@ data _null_;
 	stop;
 run;
 
-/* Sort 3: without Optimization for partial sorting */
-%let  BubbleSort = %bquote(7, 3, 23, 58, 98, 100); 
+/* Sort 3: with Optimization for partial sorting */
+
+%let  BubbleSort = %bquote(232,99,7, 3, 23, 58, 98, 100); 
 %let  Cnt        = %sysfunc(countw(&BubbleSort.));
 
 data _null_;	
@@ -111,18 +112,20 @@ data _null_;
 	end;
 	length BubbleSort $30000;
 	Index1 = (&Cnt. - 1);
-	do i = 1 to Index1 while(Index1 > 2);	
+	do i = 1 to Index1;
 		BubbleSort = "";
 		put i " loop :"	;
 		/* If the array has been partial sorting, then record this index. */
 		SortFlag = 1;
-		Index2 = (&Cnt. - i);
-		do j = 1 to Index2;
-			if Bubble[j] > Bubble[j+1] then do;
+		if i = 1 then 
+		Index2 = (&Cnt.);
+		else Index2 = Index1;
+		do j = 2 to Index2;
+			if Bubble[j] < Bubble[j-1] then do;
 				TempVar     = Bubble[j];
-				Bubble[j]   = Bubble[j+1];
-				Bubble[j+1] = TempVar;		
-				SortFlag = j+1;			
+				Bubble[j]   = Bubble[j-1];
+				Bubble[j-1] = TempVar;		
+				SortFlag = j;			
 			end;
 		end;		
 		do l = 1 to &Cnt.;
@@ -130,6 +133,7 @@ data _null_;
 		end;
 		put BubbleSort;
 		Index1 = SortFlag;		
+		if Index1 <= 2 then leave;
 	end;
 	stop;
 run;
