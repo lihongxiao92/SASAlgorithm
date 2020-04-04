@@ -82,9 +82,10 @@
 	
 	%macro QuickSort(Begin, End);
 	
-		%if %eval(&End. - &Begin.) < 2 %then %do;			
+		%if %eval(&End. - &Begin.) < 1 %then %do;			
 			%return;
 		%end;
+		%local Middle;
 		%let Middle = %pivot(&Begin., &End.);
 		
 		%QuickSort(&Begin., &Middle.)
