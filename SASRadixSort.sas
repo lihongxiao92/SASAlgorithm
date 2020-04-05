@@ -86,3 +86,74 @@ data _null_;
 	end;
 	put RadixSort;
 run;
+
+/* Improving the algorithm */
+
+
+%let  RadixSort = %bquote(2, 57 ,46, 98, 58, 23, 100, 3, 7, 8);
+%let  Cnt       = %sysfunc(Countw(&RadixSort.));
+
+data _null_;
+	array RadixST [&Cnt.] _temporary_;
+	do k = 1 to &Cnt.;
+		RadixST[k] = input(scan("&RadixSort.", k, ","), best.);		
+	end;
+	/* Get the Max number */
+	/* Using macro */
+	
+	%Macro GetMaxNumber;
+		%Global TempMax;
+		%let TempMax = %scan(&RadixSort., 1, %str(,));	
+		%do k = 2 %to &Cnt.;			
+			%if &TempMax. < %scan(&RadixSort., &k., %str(,)) %then %do;
+				%let TempMax = %scan(&RadixSort., &k., %str(,));
+			%end;			
+		%end;		
+	%Mend GetMaxNumber;
+	%GetMaxNumber
+	
+	
+	/* Create the two-dimensional array */
+	
+	D = 1;
+	do while(D <= &TempMax.);
+		/* Declare a new array and Radix every element. */		
+		array Radix999 [1: &Cnt., 0:9] _temporary_;
+		array RadixCnt [0:9] _temporary_;
+		
+		do i = 0 to 9;
+			do j = 1 to &Cnt.;
+				Radix999[j, i] = 0;
+			end;
+		end;
+		
+		do i = 0 to 9;			
+			RadixCnt[i] = 0;			
+		end;
+		
+		do j = 1 to &Cnt.;
+			x = mod(int(RadixST[j]/D), 10);
+			RadixCnt[x] + 1;
+			Radix999[RadixCnt[x], x] = RadixST[j];
+		end;
+		
+		/* Output the new sorted array */		
+		
+		Index = 1;		
+		do i = 0 to 9;
+			do j = 1 to RadixCnt[i];
+				RadixST[Index] = Radix999[j, i];
+				Index + 1;				
+			end;
+			RadixCnt[i] = 0;
+		end;
+		
+		D = D*10;
+	end;
+	
+	length RadixSort $30000;
+	do l = 1 to &Cnt.;
+		RadixSort = catx(" , ", RadixSort, RadixST[l]);
+	end;
+	put RadixSort;
+run;
