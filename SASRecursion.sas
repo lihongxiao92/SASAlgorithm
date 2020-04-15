@@ -338,3 +338,122 @@
 
 %CallGoupStairsCnt(5)
 
+/* Recursion ----- Factorial */
+
+%Macro CallFactorial(N);
+
+	%Macro Factorial(N);
+		
+		%if %eval(&N. <= 1) %then %do;
+			1
+			%return;
+		%end;
+		
+		%eval(&N. * %Factorial(%eval(&N. - 1)))
+		
+	%Mend Factorial;
+	
+	%put;
+	%put =====================;
+	%put;
+	%put Factorial &N.;
+	%put %Factorial(&N.);	
+	%put;
+	%put =====================;
+	%put;
+	
+%Mend CallFactorial;
+
+%CallFactorial(5)
+
+
+/* Recursion ----- Factorial Tail recursion Optimization */
+
+
+%Macro CallTailFactorial(N);
+
+	%let ReturnValueG = 1;
+	
+	%Macro TailFactorial(N , ReturnValue);
+		
+		%if %eval(&N. <= 1) %then %do;
+			&ReturnValue.			
+			%return;
+		%end;
+		
+		%TailFactorial(%eval(&N.-1), %eval(&N.*&ReturnValue.))
+		
+	%Mend TailFactorial;
+	
+	%put;
+	%put =====================;
+	%put;
+	%put TailFactorial &N.;
+	%put %TailFactorial(&N., &ReturnValueG.);		
+	%put;
+	%put =====================;
+	%put;
+	
+%Mend CallTailFactorial;
+
+%CallTailFactorial(5)
+
+
+/* Recursion ----- Factorial Tail recursion Optimization */
+
+
+%Macro CallTailFactorial(N);
+
+	%let ReturnValueG = 1;
+	
+	%Macro TailFactorial(N , ReturnValue);
+		
+		%if %eval(&N. <= 1) %then %do;
+			&ReturnValue.			
+			%return;
+		%end;
+		
+		%TailFactorial(%eval(&N.-1), %eval(&N.*&ReturnValue.))
+		
+	%Mend TailFactorial;
+	
+	%put;
+	%put =====================;
+	%put;
+	%put TailFactorial &N.;
+	%put %TailFactorial(&N., &ReturnValueG.);		
+	%put;
+	%put =====================;
+	%put;
+	
+%Mend CallTailFactorial;
+
+%CallTailFactorial(5)
+
+/* Tail Recursion ----- Fibonacci sequence  */
+
+%Macro CallRecursionCnt(N);
+	
+	%Macro RecursionCnt(N, F, S);
+		/* Recursion stop condition */
+		%if %eval(&N. <= 1) %then %do;
+			&S.
+			%return;
+		%end;
+
+		%RecursionCnt(%eval(&N. - 1), &S., %eval(&F. + &S.))
+		
+	%Mend RecursionCnt;
+	
+	%put;
+	%put =====================;
+	%put;
+	%put Cumulative summation &N.;
+	%put %RecursionCnt(&N., 1, 1);	
+	%put;
+	%put =====================;
+	%put;
+	
+%Mend CallRecursionCnt;
+
+%CallRecursionCnt(5)
