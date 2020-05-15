@@ -124,7 +124,7 @@
 
 		%macro DivideConquer(begin , End );
 		
-			%if %eval(&End. - &Begin.) < 1 %then %do;
+			%if %eval(&End. - &Begin.) < 2 %then %do;
 				&&&Divide&begin..
 				%return;	
 			%end;
@@ -171,9 +171,16 @@
 			%let Max_3 = %DivideConquer(&MidNext., &End.);
 			%let Max_4 = %sysfunc(max(&Max_2., &Max_3.));	
 			
-			%let Max_5 = %sysfunc(max(&Max_1., 0));
+			%let Max_5 = %sysfunc(max(&Max_1., &Max_4.));
 			
-			&Max_5.			
+			&Max_5.	
+			
+			/*  %sysfunc(max(%eval(&LeftMax. + &RightMax.), 
+						 %sysfunc(max(%DivideConquer(&Begin., &Mid.),
+									  %DivideConquer(&MidNext., &End.)
+						 )))) */
+			 
+			
 			%return;
 			
 		%mend DivideConquer;		
